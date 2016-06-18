@@ -30,44 +30,19 @@ namespace ColorEditor20160616
         {
             InitializeComponent();
 
-            //ダブルバッファリングを有効にする
-            this.SetStyle(
-               ControlStyles.DoubleBuffer |
-               ControlStyles.UserPaint |
-               ControlStyles.AllPaintingInWmPaint,
-               true);
-
-            //// 「エラー	1	'System.Windows.Forms.TrackBar' 型の修飾子をとおして プロテクト メンバー 'System.Windows.Forms.Control.SetStyle(System.Windows.Forms.ControlStyles, bool)' にアクセスすることはできません。修飾子は 'ColorEditor20160616.ColorEditorForm' 型、またはそれから派生したものでなければなりません。	C:\root\pj\Do\ColorEditor20160616\ColorEditor20160616\ColorEditorForm.cs	40	28	ColorEditor20160616」
-            //this.trackBar1.SetStyle(
-            //   ControlStyles.DoubleBuffer |
-            //   ControlStyles.UserPaint |
-            //   ControlStyles.AllPaintingInWmPaint,
-            //   true);
-            //this.trackBar1.SetStyle(ControlStyles.Opaque, true);
-            //// NumericUpDown, Label, Panel も同じ
-
-            this.trackBar1.GetType().InvokeMember(
-               "DoubleBuffered",
-               System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty,
-               null,
-               this.trackBar1,
-               new object[] { true });
-
-            //// 「コントロールは透明な背景色をサポートしません。」
-            //this.trackBar1.BackColor = Color.Transparent;
-            //this.trackBar2.BackColor = Color.Transparent;
-            //this.trackBar3.BackColor = Color.Transparent;
-            //// 「コントロールは透明な背景色をサポートしません。」
-            //this.numericUpDown1.BackColor = Color.Transparent;
-            //this.numericUpDown2.BackColor = Color.Transparent;
-            //this.numericUpDown3.BackColor = Color.Transparent;
+            // 以下のProtectedメソッドをclass継承せずに実行する
+            //   TrackBar.SetStyle(ControlStyles.Opaque, true);
+            //   背景を描画しなくする。ちらつきを防止するため。
+            Type t = typeof(System.Windows.Forms.Control);
+            System.Reflection.MethodInfo mi = t.GetMethod("SetStyle",
+                System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Public);
+            mi.Invoke(this.trackBar1, new object[] { ControlStyles.Opaque, true });
+            mi.Invoke(this.trackBar2, new object[] { ControlStyles.Opaque, true });
+            mi.Invoke(this.trackBar3, new object[] { ControlStyles.Opaque, true });
 
             this.panel1.BackColor = Color.Transparent;
-
-            // this.BackColorでいい。PictureBoxいらない
-            this.pictureBox1.Visible = false;
-            //this.pictureBox1.BackColor = Color.Transparent;
-
             this.label1.BackColor = Color.Transparent;
             this.label2.BackColor = Color.Transparent;
             this.label3.BackColor = Color.Transparent;
@@ -157,30 +132,17 @@ namespace ColorEditor20160616
                 (int)this.numericUpDown2.Value,
                 (int)this.numericUpDown3.Value);
 
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
-            this.SuspendLayout();
-            
-            //this.BackColor = this.selectedColor;
             this.BackColor = this.selectedColor;
-            //this.pictureBox1.BackColor = this.selectedColor;
-            //this.panel1.BackColor = this.selectedColor;
+            this.Update();
 
-            // 「コントロールは透明な背景色をサポートしません。」
-            this.trackBar1.BackColor = this.selectedColor;
-            this.trackBar2.BackColor = this.selectedColor;
-            this.trackBar3.BackColor = this.selectedColor;
-            // コントロールは透明な背景色をサポートしません。
+            this.panel1.BackColor = this.selectedColor;
+            this.panel1.Update();
+
             this.numericUpDown1.BackColor = this.selectedColor;
             this.numericUpDown2.BackColor = this.selectedColor;
             this.numericUpDown3.BackColor = this.selectedColor;
 
+            // 文字色は背景色と反対の色にする
             Color foreColor = Color.FromArgb(
                 this.selectedColor.R ^ 0xff,
                 this.selectedColor.G ^ 0xff,
@@ -190,13 +152,6 @@ namespace ColorEditor20160616
             {
                 foreColor = Color.Black;
             }
-            //if ((80 < this.selectedColor.R && this.selectedColor.R < 180) &&
-            //    (100 < this.selectedColor.G && this.selectedColor.G < 180) &&
-            //    (-1 < this.selectedColor.B && this.selectedColor.B < 230))
-            //{
-            //    foreColor = Color.Black;
-            //}
-
             this.label1.ForeColor = foreColor;
             this.label2.ForeColor = foreColor;
             this.label3.ForeColor = foreColor;
@@ -204,53 +159,10 @@ namespace ColorEditor20160616
             this.numericUpDown2.ForeColor = foreColor;
             this.numericUpDown3.ForeColor = foreColor;
 
-            //this.label1.ForeColor = Color.FromArgb(
-            //    this.selectedColor.R ^ 0xff,
-            //    this.selectedColor.G ^ 0xff,
-            //    this.selectedColor.B ^ 0xff);
-            //this.label2.ForeColor = Color.FromArgb(
-            //    this.selectedColor.R ^ 0xff,
-            //    this.selectedColor.G ^ 0xff,
-            //    this.selectedColor.B ^ 0xff);
-            //this.label3.ForeColor = Color.FromArgb(
-            //    this.selectedColor.R ^ 0xff,
-            //    this.selectedColor.G ^ 0xff,
-            //    this.selectedColor.B ^ 0xff);
-            //this.numericUpDown1.ForeColor = Color.FromArgb(
-            //    this.selectedColor.R ^ 0xff,
-            //    this.selectedColor.G ^ 0xff,
-            //    this.selectedColor.B ^ 0xff);
-            //this.numericUpDown2.ForeColor = Color.FromArgb(
-            //    this.selectedColor.R ^ 0xff,
-            //    this.selectedColor.G ^ 0xff,
-            //    this.selectedColor.B ^ 0xff);
-            //this.numericUpDown3.ForeColor = Color.FromArgb(
-            //    this.selectedColor.R ^ 0xff,
-            //    this.selectedColor.G ^ 0xff,
-            //    this.selectedColor.B ^ 0xff);
-
-            //this.numericUpDown1.Invalidate();
-            //this.numericUpDown2.Invalidate();
-            //this.numericUpDown3.Invalidate();
-
-            //this.numericUpDown1.Update();
-            //this.numericUpDown2.Update();
-            //this.numericUpDown3.Update();
-
+            // 1pixcel分の下線をクリアする（Windows NumericUpDown のバグ？）
             this.numericUpDown1.Refresh();
             this.numericUpDown2.Refresh();
             this.numericUpDown3.Refresh();
-
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
-            this.ResumeLayout(false);
         }
     }
 }
